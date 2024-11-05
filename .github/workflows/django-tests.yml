@@ -44,9 +44,9 @@ jobs:
 
     - name: Set up Django environment
       run: |
-        cp .env.example .env
+        cp .env
         python manage.py migrate
-      working-directory: mysite  # Remplace par le nom de ton sous-dossier
+
 
     - name: Run tests
       env:
