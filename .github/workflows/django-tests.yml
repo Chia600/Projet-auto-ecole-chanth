@@ -45,7 +45,7 @@ jobs:
     - name: Set up Django environment
       run: |
         python manage.py migrate
-
+      working-directory: mysite
 
     - name: Run tests
       env:
