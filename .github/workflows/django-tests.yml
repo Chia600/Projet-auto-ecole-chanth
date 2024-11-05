@@ -1,0 +1,54 @@
+name: Django Tests
+
+on:
+  push:
+    branches:
+      - main  # Déclenche les tests sur chaque push vers la branche principale
+  pull_request:
+    branches:
+      - main  # Déclenche les tests pour chaque PR vers la branche principale
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:13
+        env:
+          POSTGRES_USER: django
+          POSTGRES_PASSWORD: django
+          POSTGRES_DB: django_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U django"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+    - name: Check out the repository
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.9'  # Spécifie la version de Python à utiliser
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: Set up Django environment
+      run: |
+        cp .env.example .env  # Si un fichier .env est utilisé
+        python manage.py migrate  # Applique les migrations de la base de données
+
+    - name: Run tests
+      env:
+        DJANGO_SETTINGS_MODULE: mysite.settings  # Spécifie le module de configuration de Django
+        DATABASE_URL: postgres://django:django@localhost:5432/django_test
+      run: |
+        python manage.py test  # Exécute les tests
