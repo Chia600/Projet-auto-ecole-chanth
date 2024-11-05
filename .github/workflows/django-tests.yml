@@ -44,7 +44,6 @@ jobs:
 
     - name: Set up Django environment
       run: |
-        cp .env
         python manage.py migrate
 
 
