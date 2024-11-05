@@ -3,10 +3,10 @@ name: Django Tests
 on:
   push:
     branches:
-      - main  # Déclenche les tests sur chaque push vers la branche principale
+      - main
   pull_request:
     branches:
-      - main  # Déclenche les tests pour chaque PR vers la branche principale
+      - main
 
 jobs:
   test:
@@ -29,26 +29,29 @@ jobs:
 
     steps:
     - name: Check out the repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
 
     - name: Set up Python
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v4
       with:
-        python-version: '3.9'  # Spécifie la version de Python à utiliser
+        python-version: '3.9'
 
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
+      working-directory: mysite  # Remplace par le nom de ton sous-dossier
 
     - name: Set up Django environment
       run: |
-        cp .env.example .env  # Si un fichier .env est utilisé
-        python manage.py migrate  # Applique les migrations de la base de données
+        cp .env.example .env
+        python manage.py migrate
+      working-directory: mysite  # Remplace par le nom de ton sous-dossier
 
     - name: Run tests
       env:
-        DJANGO_SETTINGS_MODULE: mysite.settings  # Spécifie le module de configuration de Django
+        DJANGO_SETTINGS_MODULE: myproject.settings
         DATABASE_URL: postgres://django:django@localhost:5432/django_test
       run: |
-        python manage.py test  # Exécute les tests
+        python manage.py test
+      working-directory: mysite  # Remplace par le nom de ton sous-dossier
